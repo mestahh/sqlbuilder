@@ -122,4 +122,16 @@ public class SelectQueryTest {
 		assertThat(query.getQuery()).isEqualTo("SELECT FROM table GROUP BY column, column2");
 	}
 
+	@Test
+	public void between_criteria_can_be_added() {
+		query.addCriteria(new BetweenCriteria("A", 1, 2));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE A BETWEEN 1 AND 2");
+	}
+
+	@Test
+	public void between_criteria_can_be_added_with_strings() {
+		query.addCriteria(new BetweenCriteria("A", "2012-12-12", "2012-12-23"));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE A BETWEEN '2012-12-12' AND '2012-12-23'");
+	}
+
 }
