@@ -134,4 +134,22 @@ public class SelectQueryTest {
 		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE A BETWEEN '2012-12-12' AND '2012-12-23'");
 	}
 
+	@Test
+	public void an_or_criteria_can_be_added() {
+		Criteria criteria1 = new MatchCriteria("a", MatchCriteria.EQUALS, "b");
+		Criteria criteria2 = new MatchCriteria("c", MatchCriteria.EQUALS, "d");
+
+		query.addCriteria(new Or(criteria1, criteria2));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a = 'b' OR c = 'd'");
+	}
+
+	@Test
+	public void an_explicit_and_criteria_can_be_added() {
+		Criteria criteria1 = new MatchCriteria("a", MatchCriteria.EQUALS, "b");
+		Criteria criteria2 = new MatchCriteria("c", MatchCriteria.EQUALS, "d");
+
+		query.addCriteria(new And(criteria1, criteria2));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a = 'b' AND c = 'd'");
+	}
+
 }
