@@ -109,4 +109,17 @@ public class SelectQueryTest {
 		assertThat(query.getQuery()).isEqualTo("SELECT FROM table ORDER BY column ASC, column2 DESC");
 	}
 
+	@Test
+	public void a_group_statement_can_be_added() {
+		query.addGroup("column");
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table GROUP BY column");
+	}
+
+	@Test
+	public void more_groups_can_be_added() {
+		query.addGroup("column");
+		query.addGroup("column2");
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table GROUP BY column, column2");
+	}
+
 }

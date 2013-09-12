@@ -11,45 +11,42 @@ public class SelectQuery {
 	private String tableName;
 	private final List<Criteria> criterias = new ArrayList<Criteria>();
 	private final List<String> orders = new ArrayList<String>();
+	private final List<String> groups = new ArrayList<String>();
 
 	public String getQuery() {
 
 		String statement = "SELECT";
 		if (!columns.isEmpty()) {
-			int i = 0;
-			for (String column : columns) {
-				if (i > 0) {
-					statement += ",";
-				}
-				statement += " " + column;
-				i++;
-			}
+			statement = addStatement(statement, columns, ",");
 		}
 
 		statement += " FROM " + tableName;
 
 		if (criterias != null && !criterias.isEmpty()) {
 			statement += " WHERE";
-			int i = 0;
-			for (Criteria criteria : criterias) {
-				if (i > 0) {
-					statement += " AND";
-				}
-				statement += " " + criteria.toString();
-				i++;
-			}
+			statement = addStatement(statement, criterias, " AND");
 		}
 
 		if (!orders.isEmpty()) {
 			statement += " ORDER BY";
-			int i = 0;
-			for (String order : orders) {
-				if (i > 0) {
-					statement += ",";
-				}
-				statement += " " + order;
-				i++;
+			statement = addStatement(statement, orders, ",");
+		}
+
+		if (!groups.isEmpty()) {
+			statement += " GROUP BY";
+			statement = addStatement(statement, groups, ",");
+		}
+		return statement;
+	}
+
+	private String addStatement(String statement, List<?> statements, String delimiter) {
+		int i = 0;
+		for (Object column : statements) {
+			if (i > 0) {
+				statement += delimiter;
 			}
+			statement += " " + column.toString();
+			i++;
 		}
 		return statement;
 	}
@@ -74,5 +71,10 @@ public class SelectQuery {
 
 	public void addOrder(String column, String orderDirection) {
 		orders.add(column + " " + orderDirection);
+	}
+
+	public void addGroup(String string) {
+		groups.add(string);
+
 	}
 }
