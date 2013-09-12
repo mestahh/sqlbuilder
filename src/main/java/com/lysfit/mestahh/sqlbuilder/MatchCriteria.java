@@ -1,8 +1,6 @@
 package com.lysfit.mestahh.sqlbuilder;
 
-public class MatchCriteria {
-
-	private String criteria = "";
+public class MatchCriteria extends Criteria {
 
 	public MatchCriteria(String arg1, String operator, String arg2) {
 		criteria = arg1 + operator + "'" + arg2 + "'";
@@ -14,14 +12,8 @@ public class MatchCriteria {
 
 	public static final String EQUALS = " = ";
 	public static final String LESS = " < ";
-
-	public boolean isEmpty() {
-		return criteria.isEmpty();
-	}
-
-	@Override
-	public String toString() {
-		return criteria;
-	}
+	public static final String GREATER = " > ";
+	public static final String GREATER_OR_EQUAL = " >= ";
+	public static final String LESS_OR_EQUAL = " <= ";
 
 }

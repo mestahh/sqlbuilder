@@ -5,9 +5,6 @@ import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.lysfit.mestahh.sqlbuilder.MatchCriteria;
-import com.lysfit.mestahh.sqlbuilder.SelectQuery;
-
 public class SelectQueryTest {
 
 	private SelectQuery query;
@@ -58,6 +55,58 @@ public class SelectQueryTest {
 		query.addCriteria(new MatchCriteria("a", MatchCriteria.EQUALS, "b"));
 		query.addCriteria(new MatchCriteria("c", MatchCriteria.LESS, 5));
 		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a = 'b' AND c < 5");
+	}
+
+	@Test
+	public void an_embedded_from_statement_can_be_added() {
+		SelectQuery embedded = new SelectQuery();
+		embedded.addColumn("*");
+		embedded.setTableName("other");
+		query.addColumn("column");
+		query.setTableName("table");
+		query.addCriteria(new MatchCriteria("status", MatchCriteria.EQUALS, "ok"));
+
+		query.addCriteria(new InCriteria("value", embedded));
+
+		assertThat(query.getQuery()).isEqualTo(
+				"SELECT column FROM table WHERE status = 'ok' AND value IN(SELECT * FROM other)");
+	}
+
+	@Test
+	public void it_is_possible_to_add_a_greater_criteria() {
+		query.addCriteria(new MatchCriteria("a", MatchCriteria.GREATER, 6));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a > 6");
+	}
+
+	@Test
+	public void it_is_possible_to_add_a_greater_or_equal_criteria() {
+		query.addCriteria(new MatchCriteria("a", MatchCriteria.GREATER_OR_EQUAL, 6));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a >= 6");
+	}
+
+	@Test
+	public void it_is_possible_to_add_a_less_or_equal_criteria() {
+		query.addCriteria(new MatchCriteria("a", MatchCriteria.LESS_OR_EQUAL, 6));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a <= 6");
+	}
+
+	@Test
+	public void it_is_possible_to_add_a_like_criteria() {
+		query.addCriteria(new LikeCriteria("a", "b%d"));
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table WHERE a LIKE 'b%d'");
+	}
+
+	@Test
+	public void it_can_add_order_statements() {
+		query.addOrder("column", SelectQuery.ASC);
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table ORDER BY column ASC");
+	}
+
+	@Test
+	public void more_orders_can_be_added() {
+		query.addOrder("column", SelectQuery.ASC);
+		query.addOrder("column2", SelectQuery.DESC);
+		assertThat(query.getQuery()).isEqualTo("SELECT FROM table ORDER BY column ASC, column2 DESC");
 	}
 
 }
